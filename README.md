@@ -28,7 +28,6 @@
 <img src="image.jpg" with="400" height="800">
 <br>
 
-
 <h2>Contact</h2>
 
 <b> Email: mariusc0023@gmail.com </b>
