@@ -25,7 +25,7 @@
 
 <h2>Photo</h2>
 <p>Mobile Application</p>
-<img src="image.png">
+<img src="image.jpg">
 <br>
 
 <h2>Contact</h2>
