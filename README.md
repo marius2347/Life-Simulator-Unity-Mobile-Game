@@ -1,4 +1,4 @@
-<h1>ViataMea - Unity C# Project</h1>
+<h1>Mobile Game - Unity C# Project</h1>
 <br>
 <h3>Features</h3>
 <ul>
