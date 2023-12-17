@@ -14,7 +14,10 @@
     <li>Real time stats about (happiness, healthines, smartness and looks) </li>
     <li>Plus Age Button</li>
     <li>Death Panel with details about what u did when you were alive</li>
-    <li>Coming more soon..</li>
+    <li>Baby Panel Details (gender, age, location & stats)</li>
+    <li>RelationShips (Mother, Father)</li>
+    <li> Randomly generated (Brother or Sister, both, or none) </li>
+    <li> More to come..</li>
 </ul>
 
 <h2>Acknowledgments</h2>

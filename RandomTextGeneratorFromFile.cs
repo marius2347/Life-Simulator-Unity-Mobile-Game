@@ -49,6 +49,19 @@ public class RandomTextGeneratorFromFile : MonoBehaviour
                     PlayerPrefs.SetString("RandomLastGirlName", lines[UnityEngine.Random.Range(0, lines.Length)].Replace("\r", "").Replace("\n", ""));
 
                 }
+                if (!PlayerPrefs.HasKey("RandomBrotherFNText") && textAsset.name == "RandomBrotherFNText" && PlayerPrefs.GetInt("Brother") == 1)
+                {
+                    PlayerPrefs.SetString("RandomBrotherFNText", lines[UnityEngine.Random.Range(0, lines.Length)].Replace("\r", "").Replace("\n", ""));
+                    PlayerPrefs.SetInt("BrotherAge", UnityEngine.Random.Range(2, 5));
+                    Debug.Log(PlayerPrefs.GetString("RandomBrotherFNText"));
+
+                }
+                if (!PlayerPrefs.HasKey("RandomSisterFNText") && textAsset.name == "RandomSisterFNText" && PlayerPrefs.GetInt("Sister") == 1)
+                {
+                    PlayerPrefs.SetString("RandomSisterFNText", lines[UnityEngine.Random.Range(0, lines.Length)].Replace("\r", "").Replace("\n", ""));
+                    PlayerPrefs.SetInt("SisterAge", UnityEngine.Random.Range(2, 5));
+                    Debug.Log(PlayerPrefs.GetString("RandomSisterFNText"));
+                }
                 //Debug.Log(textAsset.name);
 
 

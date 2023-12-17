@@ -9,6 +9,11 @@ public class LoadSceneStartManager : MonoBehaviour
     {
         SceneManager.LoadScene(sceneName);
     }
+    public void SetBrotherOrSisterOrNone()
+    {
+        PlayerPrefs.SetInt("Sister", Random.Range(0, 2));
+        PlayerPrefs.SetInt("Brother", Random.Range(0, 2));
+    }
     public void DeletePrefs()
     {
         PlayerPrefs.DeleteAll();

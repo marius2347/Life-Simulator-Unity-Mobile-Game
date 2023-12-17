@@ -7,7 +7,7 @@ using static GameMenager;
 using UnityEngine.Analytics;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
-
+using System.Globalization;
 
 public class GameMenager : MonoBehaviour
 {
@@ -100,10 +100,54 @@ public class GameMenager : MonoBehaviour
     public Sprite iconUgly;
     //public Transform PanelParent;
     public ScrollRect scrollRect;
-    
 
+    public TextMeshProUGUI FirstLastNameChildText;
+    public TextMeshProUGUI GenderChildText;
+    public TextMeshProUGUI AgeChildText;
+    public TextMeshProUGUI ResidenceChildText;
 
+    public TextMeshProUGUI HappinessChildText;
+    public TextMeshProUGUI HealthChildText;
+    public TextMeshProUGUI SmartsChildText;
+    public TextMeshProUGUI LooksChildText;
 
+    public Slider HappinessChildSlider;
+    public Slider HealthChildSlider;
+    public Slider SmartsChildSlider;
+    public Slider LooksChildSlider;
+
+    public Image iconChildHappiness;
+    public Image iconChildHealth;
+    public Image iconChildSmarts;
+    public Image iconChildLooks;
+    public Sprite iconChildHappy;
+    public Sprite iconChildSad;
+    public Sprite iconChildCry;
+
+    public Sprite iconChildHealthy;
+    public Sprite iconChildSick;
+    public Sprite iconChildDie;
+
+    public Sprite iconChildSmart;
+    public Sprite iconChildThink;
+    public Sprite iconChildDumb;
+
+    public Sprite iconChildHot;
+    public Sprite iconChildCool;
+    public Sprite iconChildUgly;
+
+    public Image ImageInfo;
+    public TextMeshProUGUI InfoText;
+    public Sprite iconChildInfo;
+
+    public Image imageAssets;
+    public Button buttonAssets;
+    private ColorBlock defaultColors;
+
+    private int motherRelation;
+    private int fatherRelation;
+    private int brotherRelation;
+    private int sisterRelation;
     //public void AddToHealth(int value) {
     //Health += value;
     //if(Health > MaxHealth) 
@@ -145,6 +189,14 @@ public class GameMenager : MonoBehaviour
         //AgeText.transform.SetParent(PanelParent);
        
         DeathPanel.SetActive(false);
+        if (PlayerPrefs.GetString("CityName") == "Niciunul")
+        {
+            ResidenceChildText.text = PlayerPrefs.GetString("County");
+        }
+        else
+        {
+            ResidenceChildText.text = PlayerPrefs.GetString("CityName") + ", " + PlayerPrefs.GetString("County");
+        }
         if (PlayerPrefs.HasKey("TextNewAge"))
         {
             AgeText.text = PlayerPrefs.GetString("TextNewAge");
@@ -153,6 +205,7 @@ public class GameMenager : MonoBehaviour
         scrollRect.verticalNormalizedPosition = 0f;
         Canvas.ForceUpdateCanvases();
         checkChangeableIcon();
+        defaultColors = buttonAssets.colors;
         SetupGame();
         
     }
@@ -164,13 +217,22 @@ public class GameMenager : MonoBehaviour
         HealthText.text = $"{PlayerPrefs.GetFloat("Health")}%";
         SmartsText.text = $"{PlayerPrefs.GetFloat("Smarts")}%";
         LooksText.text = $"{PlayerPrefs.GetFloat("Looks")}%";
+        HappinessChildText.text = $"{PlayerPrefs.GetFloat("Happiness")}%";
+        HealthChildText.text = $"{PlayerPrefs.GetFloat("Health")}%";
+        SmartsChildText.text = $"{PlayerPrefs.GetFloat("Smarts")}%";
+        LooksChildText.text = $"{PlayerPrefs.GetFloat("Looks")}%";
 
-        MoneyText.text = $"Bani: {Money} lei";
+        MoneyText.text = $"{Money} lei";
         HappinessSlider.value = PlayerPrefs.GetFloat("Happiness");
         HealthSlider.value = PlayerPrefs.GetFloat("Health");
         SmartsSlider.value = PlayerPrefs.GetFloat("Smarts");
         LooksSlider.value = PlayerPrefs.GetFloat("Looks");
+        HappinessChildSlider.value = PlayerPrefs.GetFloat("Happiness");
+        HealthChildSlider.value = PlayerPrefs.GetFloat("Health");
+        SmartsChildSlider.value = PlayerPrefs.GetFloat("Smarts");
+        LooksChildSlider.value = PlayerPrefs.GetFloat("Looks");
 
+        AgeChildText.text = PlayerPrefs.GetInt("Age") + " ani";
 
         if (string.IsNullOrEmpty(PlayerPrefs.GetString("FirstName")))
         {
@@ -178,12 +240,14 @@ public class GameMenager : MonoBehaviour
             {
                 FirstLastNameText.text = PlayerPrefs.GetString("RandomFirstBoyName") + " " + PlayerPrefs.GetString("RandomLastBoyName");
                 FLN = FirstLastNameText.text;
+                FirstLastNameChildText.text = FLN;
                 PlayerPrefs.SetString("Firstname", PlayerPrefs.GetString("RandomFirstBoyName"));
                 PlayerPrefs.SetString("LastName", PlayerPrefs.GetString("RandomLastBoyName"));
             } else if(PlayerPrefs.GetString("Gender") == "Feminin")
             {
                 FirstLastNameText.text = PlayerPrefs.GetString("RandomFirstGirlName") + " " + PlayerPrefs.GetString("RandomLastGirlName");
                 FLN = FirstLastNameText.text;
+                FirstLastNameChildText.text = FLN;
                 PlayerPrefs.SetString("Firstname", PlayerPrefs.GetString("RandomFirstGirlName"));
                 PlayerPrefs.SetString("LastName", PlayerPrefs.GetString("RandomLastGirlName"));
             }
@@ -194,6 +258,7 @@ public class GameMenager : MonoBehaviour
         {
             FirstLastNameText.text = PlayerPrefs.GetString("FirstName") + " " + PlayerPrefs.GetString("LastName");
             FLN = FirstLastNameText.text;
+            FirstLastNameChildText.text = FLN;
         }
             
         if (string.IsNullOrEmpty(PlayerPrefs.GetString("County")))
@@ -210,7 +275,7 @@ public class GameMenager : MonoBehaviour
         AgeIcon();
         CheckForHungerAndDeath();
         checkInformationPanelIcons();
-
+        changeAlphaToImage();
 
     }
     public void CheckForHungerAndDeath() {
@@ -252,6 +317,37 @@ public class GameMenager : MonoBehaviour
     public void SetupGame()
     {
         DeathPanel.SetActive(false);
+        FirstLastNameChildText.text = PlayerPrefs.GetString("FirstName") + " " + PlayerPrefs.GetString("LastName");
+        GenderChildText.text = PlayerPrefs.GetString("Gender");
+        AgeChildText.text = PlayerPrefs.GetInt("Age") + " ani";
+        if (!PlayerPrefs.HasKey("motherRelationStatus"))
+        {
+            motherRelation = Random.Range(0, 100);
+            PlayerPrefs.SetInt("motherRelationStatus", motherRelation);
+        }
+        if(!PlayerPrefs.HasKey("fatherRelationStatus"))
+        {
+            fatherRelation = Random.Range(0, 100);
+            PlayerPrefs.SetInt("fatherRelationStatus", fatherRelation);
+        }
+        if (!PlayerPrefs.HasKey("brotherRelationStatus"))
+        {
+            brotherRelation = Random.Range(0, 100);
+            PlayerPrefs.SetInt("brotherRelationStatus", brotherRelation);
+        }
+        if (!PlayerPrefs.HasKey("sisterRelationStatus"))
+        {
+            sisterRelation = Random.Range(0, 100);
+            PlayerPrefs.SetInt("sisterRelationStatus", sisterRelation);
+        }
+        if (PlayerPrefs.GetString("CityName") == "Niciunul")
+        {
+            ResidenceChildText.text = PlayerPrefs.GetString("County");
+        }
+        else
+        {
+            ResidenceChildText.text = PlayerPrefs.GetString("CityName") + ", " + PlayerPrefs.GetString("County");
+        }
         if (!PlayerPrefs.HasKey("Health"))
         {
            PlayerPrefs.SetFloat("Health", 100);
@@ -286,6 +382,10 @@ public class GameMenager : MonoBehaviour
         HealthSlider.maxValue = MaxHealth;
         SmartsSlider.maxValue = MaxSmarts;
         LooksSlider.maxValue = MaxLooks;
+        HappinessChildSlider.maxValue = MaxHappiness;
+        HealthChildSlider.maxValue = MaxHealth;
+        SmartsChildSlider.maxValue = MaxSmarts;
+        LooksChildSlider.maxValue = MaxLooks;
         Food = MaxFood;
         if(!PlayerPrefs.HasKey("TextNewAge"))
         {
@@ -297,6 +397,7 @@ public class GameMenager : MonoBehaviour
         if (OnSendSetupEvent != null)
             OnSendSetupEvent();
         checkInformationPanelIcons();
+        changeAlphaToImage();
         UpdateUI();
         
 
@@ -363,16 +464,21 @@ public class GameMenager : MonoBehaviour
         Age = PlayerPrefs.GetInt("Age");
         Age++;
         PlayerPrefs.SetInt("Age", Age);
+        AgeChildText.text = PlayerPrefs.GetInt("Age") + " ani";
         checkChangeableIcon();
         if (PlayerPrefs.GetFloat("Health") <= 50 && PlayerPrefs.GetFloat("Health") > 10)
         {
             HealthSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
+            HealthChildSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
             iconHealth.sprite = iconSick;
+            iconChildHealth.sprite = iconSick;
         }
         else if (PlayerPrefs.GetFloat("Health") <= 10)
         {
             HealthSlider.fillRect.GetComponent<Image>().color = Color.red;
+            HealthChildSlider.fillRect.GetComponent<Image>().color = Color.red;
             iconHealth.sprite = iconDie;
+            iconChildHealth.sprite = iconDie;
         }
         if (PlayerPrefs.GetInt("Age") == 0 && PlayerPrefs.GetString("Gender") == "Masculin")
         {
@@ -386,6 +492,20 @@ public class GameMenager : MonoBehaviour
                     $"Ma numesc {FirstLastNameText.text}.\nMama mea este {PlayerPrefs.GetString("MotherFNText")} {PlayerPrefs.GetString("LastName")}, " +
                     $"lucreaza ca {PlayerPrefs.GetString("MotherJobsText")} ({PlayerPrefs.GetInt("MotherAge")} ani).\nTatal meu este {PlayerPrefs.GetString("FatherFNText")} {PlayerPrefs.GetString("LastName")}, " +
                     $"lucreaza ca {PlayerPrefs.GetString("FatherJobsText")} ({PlayerPrefs.GetInt("FatherAge")} ani).\n";
+                if (PlayerPrefs.HasKey("RandomBrotherFNText") && PlayerPrefs.HasKey("RandomSisterFNText"))
+                {
+                    textNewAge += $"Am un frate mai mare numit {PlayerPrefs.GetString("RandomBrotherFNText")} ({PlayerPrefs.GetInt("BrotherAge")} ani) si o sora mai mare numita {PlayerPrefs.GetString("RandomSisterFNText")} ({PlayerPrefs.GetInt("SisterAge")} ani).";
+                } else {
+                    if (PlayerPrefs.HasKey("RandomBrotherFNText"))
+                    {
+                        textNewAge += $"Am un frate mai mare numit {PlayerPrefs.GetString("RandomBrotherFNText")} ({PlayerPrefs.GetInt("BrotherAge")} ani).";
+                    }
+                    if (PlayerPrefs.HasKey("RandomSisterFNText"))
+                    {
+                        textNewAge += $"Am o sora mai mare numita {PlayerPrefs.GetString("RandomSisterFNText")} ({PlayerPrefs.GetInt("SisterAge")} ani).";
+                    }
+                }
+                
                 PlayerPrefs.SetString("TextNewAge", textNewAge);
                 AgeText.text = PlayerPrefs.GetString("TextNewAge");
 
@@ -399,6 +519,19 @@ public class GameMenager : MonoBehaviour
                     $"\n\nMa numesc {FirstLastNameText.text}.\nMama mea este {PlayerPrefs.GetString("MotherFNText")} {PlayerPrefs.GetString("LastName")}, " +
                     $"lucreaza ca {PlayerPrefs.GetString("MotherJobsText")} ({PlayerPrefs.GetInt("MotherAge")} ani).\nTatal meu este {PlayerPrefs.GetString("FatherFNText")} {PlayerPrefs.GetString("LastName")}, " +
                     $"lucreaza ca {PlayerPrefs.GetString("FatherJobsText")} ({PlayerPrefs.GetInt("FatherAge")} ani).\n";
+                if (PlayerPrefs.HasKey("RandomBrotherFNText") && PlayerPrefs.HasKey("RandomSisterFNText"))
+                {
+                    textNewAge += $"Am un frate mai mare numit {PlayerPrefs.GetString("RandomBrotherFNText")} ({PlayerPrefs.GetInt("BrotherAge")} ani) si o sora mai mare numita {PlayerPrefs.GetString("RandomSisterFNText")} ({PlayerPrefs.GetInt("SisterAge")} ani).";
+                } else {
+                    if (PlayerPrefs.HasKey("RandomBrotherFNText"))
+                    {
+                        textNewAge += $"Am un frate mai mare numit {PlayerPrefs.GetString("RandomBrotherFNText")} ({PlayerPrefs.GetInt("BrotherAge")} ani).";
+                    }
+                    if (PlayerPrefs.HasKey("RandomSisterFNText"))
+                    {
+                        textNewAge += $"Am o sora mai mare numita {PlayerPrefs.GetString("RandomSisterFNText")} ({PlayerPrefs.GetInt("SisterAge")} ani).";
+                    }
+                }
                 PlayerPrefs.SetString("TextNewAge", textNewAge);
                 AgeText.text = PlayerPrefs.GetString("TextNewAge");
 
@@ -418,6 +551,19 @@ public class GameMenager : MonoBehaviour
                     $" {PlayerPrefs.GetString("MotherFNText")} {PlayerPrefs.GetString("LastName")}, lucreaza ca {PlayerPrefs.GetString("MotherJobsText")} ({PlayerPrefs.GetInt("MotherAge")} ani)." +
                     $" \nTatal meu este {PlayerPrefs.GetString("FatherFNText")} {PlayerPrefs.GetString("LastName")}, lucreaza ca" +
                     $" {PlayerPrefs.GetString("FatherJobsText")} ({PlayerPrefs.GetInt("FatherAge")} ani).\n";
+                if (PlayerPrefs.HasKey("RandomBrotherFNText") && PlayerPrefs.HasKey("RandomSisterFNText"))
+                {
+                    textNewAge += $"Am un frate mai mare numit {PlayerPrefs.GetString("RandomBrotherFNText")} ({PlayerPrefs.GetInt("BrotherAge")} ani) si o sora mai mare numita {PlayerPrefs.GetString("RandomSisterFNText")} ({PlayerPrefs.GetInt("SisterAge")} ani).";
+                } else {
+                    if (PlayerPrefs.HasKey("RandomBrotherFNText"))
+                    {
+                        textNewAge += $"Am un frate mai mare numit {PlayerPrefs.GetString("RandomBrotherFNText")} ({PlayerPrefs.GetInt("BrotherAge")} ani).";
+                    }
+                    if (PlayerPrefs.HasKey("RandomSisterFNText"))
+                    {
+                        textNewAge += $"Am o sora mai mare numita {PlayerPrefs.GetString("RandomSisterFNText")} ({PlayerPrefs.GetInt("SisterAge")} ani).";
+                    }
+                }
                 PlayerPrefs.SetString("TextNewAge", textNewAge);
                 AgeText.text = PlayerPrefs.GetString("TextNewAge");
             }
@@ -429,6 +575,19 @@ public class GameMenager : MonoBehaviour
                     $" {PlayerPrefs.GetString("zodiacSign")}.\n\nMa numesc {FirstLastNameText.text}.\nMama mea este" +
                     $" {PlayerPrefs.GetString("MotherFNText")} {PlayerPrefs.GetString("LastName")}, lucreaza ca {PlayerPrefs.GetString("MotherJobsText")} ({PlayerPrefs.GetInt("MotherAge")} ani).\nTatal" +
                     $" meu este {PlayerPrefs.GetString("FatherFNText")} {PlayerPrefs.GetString("LastName")}, lucreaza ca {PlayerPrefs.GetString("FatherJobsText")} ({PlayerPrefs.GetInt("FatherAge")} ani).\n";
+                if (PlayerPrefs.HasKey("RandomBrotherFNText") && PlayerPrefs.HasKey("RandomSisterFNText"))
+                {
+                    textNewAge += $"Am un frate mai mare numit {PlayerPrefs.GetString("RandomBrotherFNText")} ({PlayerPrefs.GetInt("BrotherAge")} ani) si o sora mai mare numita {PlayerPrefs.GetString("RandomSisterFNText")} ({PlayerPrefs.GetInt("SisterAge")} ani).";
+                } else {
+                    if (PlayerPrefs.HasKey("RandomBrotherFNText"))
+                    {
+                        textNewAge += $"Am un frate mai mare numit {PlayerPrefs.GetString("RandomBrotherFNText")} ({PlayerPrefs.GetInt("BrotherAge")} ani).";
+                    }
+                    if (PlayerPrefs.HasKey("RandomSisterFNText"))
+                    {
+                        textNewAge += $"Am o sora mai mare numita {PlayerPrefs.GetString("RandomSisterFNText")} ({PlayerPrefs.GetInt("SisterAge")} ani).";
+                    }
+                }
                 PlayerPrefs.SetString("TextNewAge", textNewAge);
                 AgeText.text = PlayerPrefs.GetString("TextNewAge");
             }
@@ -467,44 +626,60 @@ public class GameMenager : MonoBehaviour
         if (PlayerPrefs.GetFloat("Happiness") <= 50 && PlayerPrefs.GetFloat("Happiness") > 10)
         {
             HappinessSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
+            HappinessChildSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
             iconHappiness.sprite = iconSad;
+            iconChildHappiness.sprite = iconSad;
         } else if (PlayerPrefs.GetFloat("Happiness") <= 10)
         {
             HappinessSlider.fillRect.GetComponent<Image>().color = Color.red;
+            HappinessChildSlider.fillRect.GetComponent<Image>().color = Color.red;
             iconHappiness.sprite = iconCry;
+            iconChildHappiness.sprite = iconCry;
         }
 
         if (PlayerPrefs.GetFloat("Health") <= 50 && PlayerPrefs.GetFloat("Health") > 10)
         {
             HealthSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
+            HealthChildSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
             iconHealth.sprite = iconSick;
+            iconChildHealth.sprite = iconSick;
         }
         else if (PlayerPrefs.GetFloat("Health") <= 10)
         {
             HealthSlider.fillRect.GetComponent<Image>().color = Color.red;
+            HealthChildSlider.fillRect.GetComponent<Image>().color = Color.red;
             iconHealth.sprite = iconDie;
+            iconChildHealth.sprite = iconDie;
         }
 
         if (PlayerPrefs.GetFloat("Smarts") <= 50 && PlayerPrefs.GetFloat("Smarts") > 10)
         {
             SmartsSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
+            SmartsChildSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
             iconSmarts.sprite = iconThink;
+            iconChildSmarts.sprite = iconThink;
         }
         else if (PlayerPrefs.GetFloat("Smarts") <= 10)
         {
             SmartsSlider.fillRect.GetComponent<Image>().color = Color.red;
+            SmartsChildSlider.fillRect.GetComponent<Image>().color = Color.red;
             iconSmarts.sprite = iconDumb;
+            iconChildSmarts.sprite = iconDumb;
         }
 
         if (PlayerPrefs.GetFloat("Looks") <= 50 && PlayerPrefs.GetFloat("Looks") > 10)
         {
             LooksSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
+            LooksChildSlider.fillRect.GetComponent<Image>().color = new Color(221 / 255f, 106 / 255f, 11 / 255f);
             iconLooks.sprite = iconCool;
+            iconChildLooks.sprite = iconCool;
         }
         else if (PlayerPrefs.GetFloat("Looks") <= 10)
         {
             LooksSlider.fillRect.GetComponent<Image>().color = Color.red;
+            LooksChildSlider.fillRect.GetComponent<Image>().color = Color.red;
             iconLooks.sprite = iconUgly;
+            iconChildLooks.sprite = iconUgly;
         }
 
 
@@ -515,42 +690,81 @@ public class GameMenager : MonoBehaviour
         if(PlayerPrefs.GetInt("Age") < 3) {
             ChangeableIcon.sprite = InfantIcon;
             ChangeableText.text = "Bebe";
+            InfoText.text = "Bebe";
+            ImageInfo.sprite = iconChildInfo;
         } else if (PlayerPrefs.GetInt("Age") >= 3 && PlayerPrefs.GetInt("Age") < 6) {
             ChangeableIcon.sprite = KindergartenIcon;
             ChangeableText.text = "Gradinita";
+            InfoText.text = "Gradinita";
+            ImageInfo.sprite = KindergartenIcon;
         } else if(PlayerPrefs.GetInt("Age") >= 6 && PlayerPrefs.GetInt("Age") < 11) {
             ChangeableIcon.sprite = PrimaryschoolIcon;
             ChangeableText.text = "Primara";
+            InfoText.text = "Primara";
+            ImageInfo.sprite = PrimaryschoolIcon;
         } else if(PlayerPrefs.GetInt("Age") >= 11 && PlayerPrefs.GetInt("Age") < 15) {
             ChangeableIcon.sprite = SecondaryschoolIcon;
             ChangeableText.text = "Gimnaziala";
+            InfoText.text = "Gimnaziala";
+            ImageInfo.sprite = SecondaryschoolIcon;
         } else if(PlayerPrefs.GetInt("Age") >= 15 && PlayerPrefs.GetInt("Age") < 19) {
             ChangeableIcon.sprite = HighschoolIcon;
             ChangeableText.text = "Liceu";
+            InfoText.text = "Liceu";
+            ImageInfo.sprite = HighschoolIcon;
         } else if(PlayerPrefs.GetInt("Age") >= 19 && PlayerPrefs.GetInt("Age") < 24) {
             ChangeableIcon.sprite = UniversityIcon;
             ChangeableText.text = "Facultate";
+            InfoText.text = "Facultate";
+            ImageInfo.sprite = UniversityIcon;
         } else if(PlayerPrefs.GetInt("Age") >= 24) {
            if(PlayerPrefs.GetString("Gender") == "Feminin")
             {
                 if(PlayerPrefs.GetInt("Age") < 63) {
                     ChangeableIcon.sprite = JobIcon;
                     ChangeableText.text = "Job";
+                    InfoText.text = "Job";
+                    ImageInfo.sprite = JobIcon;
                 } else {
                     ChangeableIcon.sprite = RetireIcon;
                     ChangeableText.text = "Pensie";
+                    InfoText.text = "Pensie";
+                    ImageInfo.sprite = RetireIcon;
                 }
             } else if (PlayerPrefs.GetString("Gender") == "Masculin") {
                 if (PlayerPrefs.GetInt("Age") < 65) {
                     ChangeableIcon.sprite = JobIcon;
                     ChangeableText.text = "Job";
+                    InfoText.text = "Job";
+                    ImageInfo.sprite = JobIcon;
                 }
                 else {
                     ChangeableIcon.sprite = RetireIcon;
                     ChangeableText.text = "Pensie";
+                    InfoText.text = "Pensie";
+                    ImageInfo.sprite = RetireIcon;
                 }
             }
         }
+    }
+
+    public void changeAlphaToImage()
+    {
+        if (PlayerPrefs.GetInt("Age") < 17)
+        {
+            Color newColor = Color.gray;
+            imageAssets.color = newColor;
+            ColorBlock colors = buttonAssets.colors;
+            colors.normalColor = newColor;
+            colors.highlightedColor = newColor;
+            colors.selectedColor = newColor;
+            buttonAssets.colors = colors;
+        } else
+        {
+            buttonAssets.colors = defaultColors;
+
+        }
+
     }
     
     // Update is called once per frame

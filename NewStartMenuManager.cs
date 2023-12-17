@@ -29,14 +29,26 @@ public class NewStartMenuManager : MonoBehaviour
     public Sprite SportIcon;
     public Sprite AttributesIcon;
 
+    public TextMeshProUGUI ResidenceChildText;
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
+    public void SetBrotherOrSisterOrNone()
+    {
+        PlayerPrefs.SetInt("Sister", UnityEngine.Random.Range(0, 2));
+        PlayerPrefs.SetInt("Brother", UnityEngine.Random.Range(0, 2));
+    }
     private void Start()
     {
-
-        
+        if (PlayerPrefs.GetString("CityName") == "Niciunul")
+        {
+            ResidenceChildText.text = PlayerPrefs.GetString("County");
+        }
+        else
+        {
+            ResidenceChildText.text = PlayerPrefs.GetString("CityName") + ", " + PlayerPrefs.GetString("County");
+        }
         if (string.IsNullOrEmpty(PlayerPrefs.GetString("FirstName")))
         {
 
@@ -96,6 +108,7 @@ public class NewStartMenuManager : MonoBehaviour
         if (string.IsNullOrEmpty(PlayerPrefs.GetString("County")))
         {
             CountySubText.text = "Alba";
+            PlayerPrefs.SetString("County", "Alba");
         }
         else
         {
@@ -105,6 +118,7 @@ public class NewStartMenuManager : MonoBehaviour
         if (string.IsNullOrEmpty(PlayerPrefs.GetString("CityName")))
         {
             CitySubText.text = "Niciunul";
+            PlayerPrefs.SetString("CityName", "Niciunul");
         }
         else
         {

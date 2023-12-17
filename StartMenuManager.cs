@@ -87,6 +87,7 @@ public class StartMenuManager : MonoBehaviour
         if (string.IsNullOrEmpty(PlayerPrefs.GetString("County")))
         {
             CountySubText.text = "Alba";
+            PlayerPrefs.SetString("County", "Alba");
         }
         else
         {

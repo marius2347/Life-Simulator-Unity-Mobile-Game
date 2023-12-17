@@ -36,7 +36,8 @@ public class LoadSceneManager : MonoBehaviour
     public CanvasGroup SetTalentCanvas;
     public CanvasGroup SetAttributesCanvas;
 
-
+    public GameObject ChildPanel;
+    public GameObject ChildPanelBorder;
     private void Start()
     {
         NewGame.SetActive(false);
@@ -53,7 +54,6 @@ public class LoadSceneManager : MonoBehaviour
         SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
         
     }
-    
     public void OpenMainMenu()
     {
         MainMenu.SetActive(true);
@@ -172,5 +172,26 @@ public class LoadSceneManager : MonoBehaviour
         SetAttributesCanvas.blocksRaycasts = true;
     }
 
-    
+    public void OpenChildPanel()
+    {
+        if (PlayerPrefs.GetInt("Age") < 3)
+        {
+            ChildPanel.SetActive(true);
+            ChildPanelBorder.SetActive(true);
+            MainGameCanvas.interactable = false;
+            MainGameCanvas.blocksRaycasts = false;
+            MainGameCanvas.alpha = 0.1F;
+        }
+        
+    }
+
+    public void CloseChildPanel()
+    {
+        ChildPanel.SetActive(false);
+        ChildPanelBorder.SetActive(false);
+        MainGameCanvas.interactable = true;
+        MainGameCanvas.blocksRaycasts = true;
+        MainGameCanvas.alpha = 1F;
+    }
+
 }
